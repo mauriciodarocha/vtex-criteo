@@ -1,4 +1,4 @@
-vtex_criteo
+VTEX CRITEO
 ===========
 
 Plugins para instalação das Tags Criteo
