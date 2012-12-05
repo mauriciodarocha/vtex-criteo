@@ -154,5 +154,5 @@ jQuery.criteo_product({
 
 **Como a página do carrinho e o fechamento do pedido são página dos sistema, você deve ter utilizado "Carregando por javascript". Portanto, o plugin já é carregado e inicializado. Não há nada a ser feito.**
 
-**Atenção:** Os códigos de javascript, devem ser copiados para arquivos .js, ou dentro do template entre as tags **<script type="texte/javascript">** e **</script>**, senão não funcionaram.
+**Atenção:** Os códigos de javascript, devem ser copiados para arquivos .js, ou dentro do template entre as tags `<script type="text/javascript">` e `</script>`, senão não funcionaram.
 
