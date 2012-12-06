@@ -44,12 +44,12 @@ Depois é necessário iniciar o plugin da página. Cada plugin tem sua própria 
 * abra o template e cole o código...
 
 ...para home:
-```
+```html
 <script type="text/javascript" src="/arquivos/criteo_home.js"></script>
 ```
 
 ...para página de produto (detalhe do produto):
-```
+```html
 <script type="text/javascript" src="/arquivos/criteo_product.js"></script>
 ```
 
@@ -65,7 +65,7 @@ Antes de iniciar, você irá precisar dos 3 números que estão no manual do CRI
 * abra o javascript da página que deseja instalar e cole o código... **(Faça a alteração dos números)**
 
 ...para home:
-```
+```javascript
 if(typeof jQuery.criteo_home=="undefined")
     jQuery.getScript('/arquivos/criteo_home.js',function(){
         jQuery.criteo_home({
@@ -83,7 +83,7 @@ else
 ```
 
 ...para página de produto (detalhe do produto):
-```
+```javascript
 if(typeof jQuery.criteo_product=="undefined")
     jQuery.getScript('/arquivos/criteo_product.js',function(){
         jQuery.criteo_product({
@@ -101,7 +101,7 @@ else
 ```
 
 ...para o carrinho e fechamento do pedido: (arquivo user.js)
-```
+```javascript
 jQuery(document).ready(function() {
     if(jQuery("body").hasClass("carrinho")||jQuery("body").hasClass("checkout","finaliza-compra"))
         if(typeof jQuery.criteo_checkout=="undefined")
@@ -119,7 +119,6 @@ jQuery(document).ready(function() {
                 widget_id2: 222
             });
 });
-
 ```
 
 **Atenção:** Não se esqueça de alterar os números 000 = id do cliente para CRITEO, 111 = widget 1, 222 = widget 2. Veja o manual da CRITEO para obter estes números.
@@ -133,7 +132,7 @@ Se você optou por alterar os templates nas páginas "home" e "produto" (detalhe
 * copie o código de javascript para inicializar o plugin... **(Faça a alteração dos números)**
 
 ...para home:
-```
+```javascript
 jQuery.criteo_home({
     id: 000,
     widget_id1: 111,
@@ -142,7 +141,7 @@ jQuery.criteo_home({
 ```
 
 ...para página de produto (detalhe do produto):
-```
+```javascript
 jQuery.criteo_product({
     id: 000,
     widget_id1: 111,
@@ -154,5 +153,7 @@ jQuery.criteo_product({
 
 **Como a página do carrinho e o fechamento do pedido são página dos sistema, você deve ter utilizado "Carregando por javascript". Portanto, o plugin já é carregado e inicializado. Não há nada a ser feito.**
 
+---
 **Atenção:** Os códigos de javascript, devem ser copiados para arquivos .js, ou dentro do template entre as tags `<script type="text/javascript">` e `</script>`, senão não funcionaram.
 
+---
