@@ -82,7 +82,10 @@ else
     });
 ```
 
-...para página de produto (detalhe do produto):
+...para página de produto com multiplos skus (detalhe do produto):
+
+**O padrão foi estabelecido para busca com múltiplos skus, se não é o caso de sua loja veja o exemplo abaixo.**
+
 ```javascript
 if(typeof jQuery.criteo_product=="undefined")
     jQuery.getScript('/arquivos/criteo_product.js',function(){
@@ -97,6 +100,31 @@ else
         id: 000,
         widget_id1: 111,
         widget_id2: 222
+    });
+```
+
+...para página de produto com único sku (detalhe do produto):
+
+**Para um único sku, a opção selection deve ser providenciada para a captura do id.**
+Uma maneira mais fácil é instalar o controle para o histórico `<vtex.cmc:navigationHistory/>`, se ele já não estiver na sua página.
+E procurar pelo id do produto dentro do link. Ex.: `jQuery("#history .ajax-content-loader").attr("rel").match(/\d+/)[0]`
+
+```javascript
+if(typeof jQuery.criteo_product=="undefined")
+    jQuery.getScript('/arquivos/criteo_product.js',function(){
+        jQuery.criteo_product({
+            id: 000,
+            widget_id1: 111,
+            widget_id2: 222,
+            selection: jQuery("#history .ajax-content-loader").attr("rel").match(/\d+/)[0]
+        });
+    });
+else
+    jQuery.criteo_product({
+        id: 000,
+        widget_id1: 111,
+        widget_id2: 222,
+        selection: jQuery("#history .ajax-content-loader").attr("rel").match(/\d+/)[0]
     });
 ```
 
