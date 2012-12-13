@@ -1,6 +1,5 @@
 /* DO NOT DELETE THIS */
-var set_cookie=function(e,a,b){var c=new Date;c.setDate(c.getDate()+b);a=escape(a)+(null==b?"":"; expires="+c.toUTCString());document.cookie=e+"="+a},get_cookie=function(e){var a,b,c,d=document.cookie.split(";");for(a=0;a<d.length;a++)if(b=d[a].substr(0,d[a].indexOf("=")),c=d[a].substr(d[a].indexOf("=")+1),b=b.replace(/^\s+|\s+$/g,""),b==e)return unescape(c)};Object.prototype.toSource 
-    ||(Object.prototype.toSource=function(){return JSON.stringify(this);});
+var set_cookie=function(e,a,b){var c=new Date;c.setDate(c.getDate()+b);a=escape(a)+(null==b?"":"; expires="+c.toUTCString());document.cookie=e+"="+a},get_cookie=function(e){var a,b,c,d=document.cookie.split(";");for(a=0;a<d.length;a++)if(b=d[a].substr(0,d[a].indexOf("=")),c=d[a].substr(d[a].indexOf("=")+1),b=b.replace(/^\s+|\s+$/g,""),b==e)return unescape(c)};
 /* DO NOT DELETE ABOVE THIS */
 
 (function(){
@@ -111,7 +110,10 @@ var set_cookie=function(e,a,b){var c=new Date;c.setDate(c.getDate()+b);a=escape(
 					_data.skus = _criteo_checkout.product_ids;
 					_data.prices = _criteo_checkout.prices;
 					_data.qtys = _criteo_checkout.quantities;
-					_data_string = _data.toSource();
+					if(typeof Object.prototype.toSource=="undefined")
+						_data_string = JSON.stringify(_data);
+					else
+						_data_string = _data.toSource();
 					set_cookie(_criteo_checkout.cookie_name,_data_string,{"expires":1,"path":"/"});
 				},
 				product: function(_sku)
