@@ -14,7 +14,7 @@
 			{
 				if(!_criteo_product.check()) return false;
 
-				_criteo_product.load.criteo();
+				_criteo_product.set.product();
 			},
 			set:
 			{
@@ -27,6 +27,8 @@
 
 					if (typeof window.CRITEO != "undefined")
 						window.CRITEO.Load(false);
+
+          _criteo_product.load.criteo();
 				},
 				product: function()
 				{
@@ -38,8 +40,8 @@
 						return false; 
 					}
 
-					_criteo_product.product_id = _id;
-					_criteo_product.set.vars();
+					_criteo_product.product_id = ""+_id;
+          _criteo_product.set.vars();
 				}
 			},
 			load:
@@ -48,12 +50,12 @@
 				{
 		            // Load criteo_id.js if not already on the system
 					if(typeof CRITEO=="undefined")
-		                jQuery.getScript("/arquivos/criteo_ld.js",function(){
-		                	// Once the script is loaded I can set the variables
-							_criteo_product.set.product();
-		                });
-		            else
-		            	// If criteo script is present on the system I can set the variables
+		          jQuery.getScript("/arquivos/criteo_ld.js",function(){
+		           	// Once the script is loaded I can set the variables
+							   _criteo_product.set.product();
+		          });
+		      else
+		        	// If criteo script is present on the system I can set the variables
 						_criteo_product.set.product();
 				}
 			},
