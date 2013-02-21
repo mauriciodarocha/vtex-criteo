@@ -14,21 +14,21 @@
 			{
 				if(!_criteo_product.check()) return false;
 
-				_criteo_product.set.product();
+				_criteo_product.load.criteo();
 			},
 			set:
 			{
 				vars: function()
 				{
-					window.CRITEO_CONF = [[{
-						pageType: 'product',
-						'Product ID': _criteo_product.product_id
-					}], [_criteo_product_settings.id, 'pmo', 'us.', '110', [[_criteo_product_settings.widget_id1, _criteo_product_settings.widget_id2]]]];
-
+          window.CRITEO_CONF = [[{
+            pageType: 'product',
+            'Product ID': _criteo_product.product_id
+          }], [_criteo_product_settings.id, 'psu', 'us.', '110', [[_criteo_product_settings.widget_id1, _criteo_product_settings.widget_id2]],
+            { 'Product ID': ['i', 0] }
+          ]];
+          
 					if (typeof window.CRITEO != "undefined")
 						window.CRITEO.Load(false);
-
-          _criteo_product.load.criteo();
 				},
 				product: function()
 				{
@@ -40,8 +40,8 @@
 						return false; 
 					}
 
-					_criteo_product.product_id = ""+_id;
-          _criteo_product.set.vars();
+					_criteo_product.product_id = _id;
+					_criteo_product.set.vars();
 				}
 			},
 			load:
@@ -50,12 +50,12 @@
 				{
 		            // Load criteo_id.js if not already on the system
 					if(typeof CRITEO=="undefined")
-		          jQuery.getScript("/arquivos/criteo_ld.js",function(){
-		           	// Once the script is loaded I can set the variables
-							   _criteo_product.set.product();
-		          });
-		      else
-		        	// If criteo script is present on the system I can set the variables
+		                jQuery.getScript("/arquivos/criteo_ld.js",function(){
+		                	// Once the script is loaded I can set the variables
+							_criteo_product.set.product();
+		                });
+		            else
+		            	// If criteo script is present on the system I can set the variables
 						_criteo_product.set.product();
 				}
 			},
