@@ -20,13 +20,15 @@ var set_cookie=function(e,a,b){var c=new Date;c.setDate(c.getDate()+b);a=escape(
       prices:[],
       quantities:[],
       cookie_name: "__cart_data",
+      ajax_flag: false,
       init: function()
       {
         if(!_criteo_checkout.check_options()) return false;
 
         _criteo_checkout.load.criteo();
 
-        if(!_criteo_checkout.ajax_complete_triggered)
+
+        if(!_criteo_checkout.ajax_complete_triggered && jQuery("body").hasClass("carrinho"))
         {
         	_criteo_checkout.ajax_complete_triggered=true;	
         	jQuery(document).ajaxComplete(_criteo_checkout.ajax_complete);
@@ -34,7 +36,7 @@ var set_cookie=function(e,a,b){var c=new Date;c.setDate(c.getDate()+b);a=escape(
       },
       ajax_complete: function () 
       {
-  				_criteo_checkout.set.data.cart();
+        _criteo_checkout.load.criteo();
       },
       set:
       {
@@ -43,7 +45,9 @@ var set_cookie=function(e,a,b){var c=new Date;c.setDate(c.getDate()+b);a=escape(
           checkout: function()
           {
             _criteo_checkout.transaction_id = document.getElementById("orderid").innerHTML;
-            var _data = _criteo_checkout.get.cookie();
+            var _data = _criteo_checkout.get.cookie()||"";
+
+            if(_data==="") return false;
 
             _criteo_checkout.product_ids = _data.skus;
             _criteo_checkout.prices = _data.prices;
@@ -150,11 +154,15 @@ var set_cookie=function(e,a,b){var c=new Date;c.setDate(c.getDate()+b);a=escape(
         criteo: function()
         {
           // Load criteo_id.js if not already on the system
-          if(typeof CRITEO=="undefined")
+          if(typeof CRITEO=="undefined" && !_criteo_checkout.ajax_flag)
+          {
+            _criteo_checkout.ajax_flag=true;
             jQuery.getScript("/arquivos/criteo_ld.js",function(){
               // Once the script is loaded I can set the variables
               _criteo_checkout.check.page();
+              _criteo_checkout.ajax_flag=false;
             });
+          }
           else
             // If criteo script is present on the system I can set the variables
             _criteo_checkout.check.page();
