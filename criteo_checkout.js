@@ -26,18 +26,38 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
       init: function () {
         if (!_criteo_checkout.check_options()) return false;
 
-        _criteo_checkout.load.criteo();
+        _criteo_checkout.set.events();
+        // _criteo_checkout.load.criteo();
 
-        if (!_criteo_checkout.ajax_complete_triggered && jQuery("body").hasClass("carrinho")) {
-          _criteo_checkout.ajax_complete_triggered = true;
-          jQuery(document).ajaxComplete(_criteo_checkout.ajax_complete);
-        }
+        // if (!_criteo_checkout.ajax_complete_triggered && jQuery("body").hasClass("carrinho")) {
+        //   _criteo_checkout.ajax_complete_triggered = true;
+        //   jQuery(document).ajaxComplete(_criteo_checkout.ajax_complete);
+        // }
       },
-      ajax_complete: function () {
-        _criteo_checkout.products = jQuery(".quantidade .boxQuantidade").length;
-        _criteo_checkout.load.criteo();
-      },
+      // ajax_complete: function () {
+      //   _criteo_checkout.products = jQuery(".quantidade .boxQuantidade").length;
+      //   _criteo_checkout.load.criteo();
+      // },
       set: {
+        events: function () {
+          if(jQuery(".remove-item a, .adicionar-item a, .excluir a").not(".criteo").length<=0) return false;
+
+          jQuery(".remove-item a, .adicionar-item a").not(".criteo").addClass("criteo").click(function () 
+          {
+            // _criteo_checkout.skus = [];
+            jQuery(this).parents("fieldset").find(".boxQuantidade").removeClass("pi");
+            _criteo_checkout.load.criteo();
+          });
+
+          jQuery(".excluir a").not(".criteo").addClass("criteo").click(function () 
+          {
+            _criteo_checkout.skus = [];
+            jQuery(this).parents("fieldset").find(".boxQuantidade").removeClass("pi");
+            _criteo_checkout.load.criteo();
+          });
+
+          _criteo_checkout.load.criteo();
+        },
         ids: function () {
           // set product id on cart
           var get_id = function (sku, ndx) {
