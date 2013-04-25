@@ -13,6 +13,7 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
     }, _criteo_checkout_options);
 
     var _criteo_checkout = {
+      cart_data:null,
       skus:[],
       products: 0,
       ajax_complete_triggered: false,
@@ -26,19 +27,31 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
       init: function () {
         if (!_criteo_checkout.check_options()) return false;
 
-        _criteo_checkout.load.criteo();
-
-        if (!_criteo_checkout.ajax_complete_triggered && jQuery("body").hasClass("carrinho")) {
-          _criteo_checkout.ajax_complete_triggered = true;
+        if (jQuery("body").hasClass("carrinho")) {
+          _criteo_checkout.set.cart_data();
           jQuery(document).ajaxComplete(_criteo_checkout.ajax_complete);
         }
+
+        if (jQuery("body").hasClass("finaliza-compra"))
+          _criteo_checkout.load.criteo();
+        
       },
       ajax_complete: function () {
-        _criteo_checkout.products = jQuery(".quantidade .boxQuantidade").length;
-        _criteo_checkout.load.criteo();
+        _criteo_checkout.set.cart_data();
       },
       set: {
-        ids: function () {
+        events: function () {
+          if(jQuery(".excluir .excluir").not(".active").length<=0) return false;
+
+          jQuery(".excluir .excluir").not(".active").addClass("active").click(function () 
+          {
+            var sku = jQuery(this).parents("tr").find(".quantidade .boxQuantidade").attr("title");
+            delete(_criteo_checkout.cart_data[sku]);
+          });
+        },
+        cart_data: function () {
+          _criteo_checkout.cart_data = _criteo_checkout.cart_data||{};
+
           // set product id on cart
           var get_id = function (sku, ndx) {
             if(_criteo_checkout.skus.inArray(sku)) return false;
@@ -49,22 +62,32 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
               url: "/produto/sku/" + sku,
               success: function (data) {
                 var product_id = data[0].IdProduct;
-                if (product_id !== "undefined" && product_id !== null) {
-                    jQuery(".item-" + ndx).not(".pi").addClass("pi").attr("productid", product_id);
-                  
-                    if(jQuery(".quantidade .boxQuantidade").length === _criteo_checkout.products)
-                      _criteo_checkout.set.data.cart();
-                }
+                if (product_id !== "undefined" && product_id !== null)
+                  _criteo_checkout.cart_data[sku].id = product_id;
               }
             };
 
             jQuery.ajax(opt);
           };
-          jQuery(".quantidade .boxQuantidade").not(".pi").each(function (ndx, item) {
-            var current = jQuery(item).addClass("item-" + ndx);
+
+          var length = jQuery(".quantidade .boxQuantidade").length;
+          jQuery(".quantidade .boxQuantidade").each(function (ndx, item) {
             var sku = jQuery(item).attr("title");
-            get_id(sku, ndx);
+            var qty = jQuery(item).val();
+            var price = jQuery(item).parents("tr").find(".preco-total").text().replace(/\s*([\d,.]*?)/g, "$1").replace(/R\$/, '').replace(/\./, '').replace(/,/, '.');
+
+            _criteo_checkout.cart_data[sku] = _criteo_checkout.cart_data[sku]||{};
+
+            if(typeof _criteo_checkout.cart_data[sku].id==="undefined")
+              get_id(sku, ndx);
+
+            _criteo_checkout.cart_data[sku].qty = qty||1;
+            _criteo_checkout.cart_data[sku].price = price||"0.00";
+
+            if(ndx === (length-1))
+              _criteo_checkout.load.criteo();
           });
+
         },
         data: {
           checkout: function () {
@@ -82,22 +105,19 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
           },
           cart: function () {
             var _sku, _qty, _price, _skus = [], _id, _ids = [], _qtys = [], _prices = [];
-            jQuery("table tbody tr").each(function (ndx, item) {
-              _id = jQuery(item).find(".quantidade .pi").attr("productid");
-              // _sku = jQuery(item).find(".quantidade input").attr("title");
-              _price = jQuery(item).find(".preco-total").text().replace(/\s*([\d,.]*?)/g, "$1").replace(/R\$/, '').replace(/\./, '').replace(/,/, '.');
-              _qty = jQuery(item).find(".quantidade input").val();
+            for(var item in _criteo_checkout.cart_data){
+              _id = _criteo_checkout.cart_data[item].id;
+              _price = _criteo_checkout.cart_data[item].price;
+              _qty = _criteo_checkout.cart_data[item].qty;
 
               if (_id !== null) {
                 _ids.push(_id);
-                // _skus.push(_sku);
                 _prices.push(_price);
                 _qtys.push(_qty);
               }
-            });
+            };
 
             _criteo_checkout.product_ids = _ids;
-            // _criteo_checkout.skus = _skus;
             _criteo_checkout.prices = _prices;
             _criteo_checkout.quantities = _qtys;
 
@@ -209,8 +229,7 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
       check: {
         page: function () {
           if (jQuery("body").hasClass("carrinho"))
-            _criteo_checkout.set.ids();
-          // _criteo_checkout.set.data.cart();
+            _criteo_checkout.set.data.cart();
           else
             _criteo_checkout.set.data.checkout();
         }
