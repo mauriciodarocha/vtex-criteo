@@ -63,7 +63,7 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
               success: function (data) {
                 var product_id = data[0].IdProduct;
                 if (product_id !== "undefined" && product_id !== null)
-                  _criteo_checkout.cart_data[sku].id = product_id;
+                  _criteo_checkout.cart_data[sku].id = ""+product_id;
               }
             };
 
