@@ -37,6 +37,7 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
         
       },
       ajax_complete: function () {
+        _criteo_checkout.ajax_complete_triggered = true;
         _criteo_checkout.set.cart_data();
       },
       set: {
@@ -53,7 +54,7 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
           _criteo_checkout.cart_data = _criteo_checkout.cart_data||{};
 
           // set product id on cart
-          var get_id = function (sku, ndx) {
+          var get_id = function (sku, ndx, length) {
             if(_criteo_checkout.skus.inArray(sku)) return false;
 
             _criteo_checkout.skus.push(sku);
@@ -64,6 +65,10 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
                 var product_id = data[0].IdProduct;
                 if (product_id !== "undefined" && product_id !== null)
                   _criteo_checkout.cart_data[sku].id = ""+product_id;
+
+                if(ndx === (length-1))
+                  _criteo_checkout.load.criteo();
+
               }
             };
 
@@ -84,8 +89,11 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
             _criteo_checkout.cart_data[sku].qty = qty||1;
             _criteo_checkout.cart_data[sku].price = price||"0.00";
 
-            if(ndx === (length-1))
+            if(typeof _criteo_checkout.cart_data[sku].id!=="undefined"&&_criteo_checkout.ajax_complete_triggered&&ndx === (length-1))
+            {
+              _criteo_checkout.ajax_complete_triggered=false;
               _criteo_checkout.load.criteo();
+            }
           });
 
         },
@@ -135,7 +143,7 @@ Array.prototype.inArray = function(value) {var i; for (i=0; i < this.length; i++
                   'Quantities': _criteo_checkout.quantities
                 }
               ],
-              [_criteo_checkout_settings.id, 'pmo', 'us.', '110', [
+              [_criteo_checkout_settings.id, 'pmo', 'us.', '100', [
                   [_criteo_checkout_settings.widget_id1, _criteo_checkout_settings.widget_id2]
                 ], {
                   'Product IDs': ['i', 1],
